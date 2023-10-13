@@ -207,6 +207,6 @@ export class HomePage {
   }
 
   go_to_playstore_page() {
-    window.open('about:blank', '_system');
+    window.open('https://play.google.com/store/apps/details?id=org.pjcone.simplelogs', '_system');
   }
 }
