@@ -17,6 +17,7 @@ export class HomePage {
 
   /** 모든 정보 모아두기, 달력에 날짜 표기 */
   AllFileList = [{
+    url: undefined,
     date: '2023-10-05',
     textColor: '#800080',
     backgroundColor: '#ffc0cb',
@@ -24,19 +25,28 @@ export class HomePage {
     content: 'testContent',
   }];
   /** 최종적으로 보여지는 결과물, 필터가 안된 경우에도 이걸로 보여줌 */
-  FilteredList = [];
+  FilteredList = [
+    {
+      url: undefined,
+      date: '2023-10-05',
+      title: 'testTitle',
+      content: 'testContent',
+    }
+  ];
   /** 보여주는 위치 시작값 */
   startIndex = 0;
   /** 선택된 카드, 새로 생성하거나 없을 때 -1 */
   SelectedIndex = -1;
   /** 보여주는 자료의 Index 배열 (number[]) */
-  ListSize = [];
+  ListSize = [0];
   isCreateNew = false;
   CreateTime = '0000-00-00 00:00:00';
   CardTargetDate = '';
   userInput = {
     title: '',
     content: '',
+    url: undefined,
+    blob: undefined as Blob,
   }
 
   async ionViewDidEnter() {
@@ -67,12 +77,33 @@ export class HomePage {
     this.isCreateNew = true;
     this.userInput.title = '';
     this.userInput.content = '';
+    this.userInput.url = undefined;
+    this.userInput.blob = undefined;
     this.CardTargetDate = '';
     if (this.p5canvas) this.p5canvas.loop();
     setTimeout(() => {
       let NewCardTitleElement = document.getElementById('newTitle');
       NewCardTitleElement.focus();
     }, 0);
+  }
+
+  ActiveInputSelector() {
+    let ele = document.getElementById('imageInput');
+    ele.click();
+  }
+  inputImageSelected(ev: any) {
+    if (ev.target.files.length) {
+      let blob = new Blob([ev.target.files[0]]);
+      this.userInput.blob = blob;
+      let _url = URL.createObjectURL(blob);
+      this.userInput.url = _url;
+      setTimeout(() => {
+        URL.revokeObjectURL(_url);
+      }, 0);
+    } else {
+      this.userInput.url = undefined;
+      this.userInput.blob = undefined;
+    }
   }
 
   SearchKeyword = '';
@@ -82,7 +113,7 @@ export class HomePage {
     this.SearchKeyword = '';
   }
 
-  save() {
+  async save() {
     console.log('내용 저장하기: ', this.userInput);
   }
 

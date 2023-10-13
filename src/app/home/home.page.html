@@ -64,10 +64,11 @@
     </ion-button>
     <div *ngIf="isCreateNew">
       <ion-card>
-        <ion-button expand="block" fill="clear">
+        <ion-button expand="block" fill="clear" (click)="ActiveInputSelector()">
           이미지 추가
         </ion-button>
-        <img src="https://ionicframework.com/docs/img/demos/card-media.png" />
+        <input id="imageInput" type="file" accept="image/*" (change)="inputImageSelected($event)" hidden>
+        <img *ngIf="userInput.url" [src]="userInput.url" />
         <ion-card-header>
           <ion-card-subtitle>
             <input type="text" class="new_card_input" [(ngModel)]="CardTargetDate">
@@ -79,23 +80,23 @@
         </ion-card-header>
         <ion-card-content>
           <input type="text" class="new_card_input" placeholder="New Content" [(ngModel)]="userInput.content">
-          <ion-button expand="block" fill="clear">
+          <ion-button expand="block" fill="clear" (click)="save()">
             작성하기
           </ion-button>
         </ion-card-content>
       </ion-card>
     </div>
-    <div *ngFor="let i of [0,1,2,3,4,5,6,7,8,9]">
-      <ion-card>
-        <img src="https://ionicframework.com/docs/img/demos/card-media.png" />
+    <div *ngFor="let i of ListSize">
+      <ion-card (click)="SelectedIndex = i">
+        <img *ngIf="FilteredList[i].url" [src]="FilteredList[i].url" />
         <ion-card-header>
-          <ion-card-subtitle>0000-00-00</ion-card-subtitle>
-          <ion-card-title>Awesome Title</ion-card-title>
+          <ion-card-subtitle>{{FilteredList[i].date}}</ion-card-subtitle>
+          <ion-card-title>{{FilteredList[i].title}}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          Awesome content
+          {{FilteredList[i].content}}
         </ion-card-content>
-        <ion-grid>
+        <ion-grid *ngIf="i == SelectedIndex">
           <ion-row>
             <ion-col>
               <ion-button expand="block" fill="clear">
