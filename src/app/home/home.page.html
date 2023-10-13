@@ -1,20 +1,88 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-menu contentId="menu-content" menuId="menu-content" side="start" type="overlay">
+  <ion-header>
+    <ion-toolbar color="primary">
+      <ion-title>간단 메모장</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-item-divider>
+      <ion-label>기능</ion-label>
+    </ion-item-divider>
+    <ion-item button>
+      <ion-icon slot="start" name="search-outline"></ion-icon>
+      <ion-label>검색어</ion-label>
+    </ion-item>
+    <ion-accordion-group>
+      <ion-accordion toggleIcon="">
+        <ion-item slot="header">
+          <ion-icon slot="start" name="calendar-outline"></ion-icon>
+          <ion-label>날짜 탐색</ion-label>
+        </ion-item>
+        <div slot="content">
+          <ion-datetime [locale]="lang.lang" presentation="date" [highlightedDates]="AllFileList"></ion-datetime>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+    <ion-item-divider>
+      <ion-label>제작자</ion-label>
+    </ion-item-divider>
+    <ion-item button (click)="go_to_creator_home()">
+      <ion-avatar slot="start">
+        <img src="assets/icon/favicon.png" />
+      </ion-avatar>
+      <ion-label>
+        <div>Project: Cone</div>
+        <div style="color: #888;">최성수</div>
+      </ion-label>
+    </ion-item>
+  </ion-content>
+</ion-menu>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
+<div id="menu-content" class="ion-page">
+  <ion-header [translucent]="true">
+    <ion-toolbar color="tertiary">
+      <ion-buttons slot="start">
+        <ion-menu-button> </ion-menu-button>
+      </ion-buttons>
+      <ion-title>
+        나의 기록
+      </ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
-</ion-content>
+  <ion-content [fullscreen]="true" class="ion-padding">
+    <ion-button color="tertiary" expand="block" fill="clear" shape="round" (click)="create_new()">
+      눌러서 새 기록 작성
+    </ion-button>
+    <div *ngIf="isCreateNew">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>
+            {{CreateTime}}
+          </ion-card-subtitle>
+          <ion-card-title>
+            <input id="newTitle" type="text" class="new_card_input" placeholder="New Title"
+              [(ngModel)]="userInput.title">
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <input type="text" class="new_card_input" placeholder="New Title" [(ngModel)]="userInput.content">
+          <ion-button expand="block" fill="clear" shape="round">
+            작성하기
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+    <div *ngFor="let i of [0,1,2,3,4,5,6,7,8,9]">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-subtitle>0000-00-00 00:00:00</ion-card-subtitle>
+          <ion-card-title>Awesome Title</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          Awesome content
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </ion-content>
+</div>

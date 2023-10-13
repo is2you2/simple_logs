@@ -1,27 +1,13 @@
-#container {
-  text-align: center;
-
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+.new_card_input {
+  border: none;
+  width: 100%;
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+ion-menu::part(backdrop) {
+  background-color: rgba(255, 117, 78, 0.5);
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
+ion-menu::part(container) {
+  border-radius: 0 16px 16px 0;
+  box-shadow: 4px 0px 16px rgba(255, 117, 78, 0.18);
 }

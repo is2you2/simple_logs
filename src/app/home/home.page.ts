@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { LangService } from '../lang.service';
+import { IndexedDBService } from '../indexed-db.service';
+import * as p5 from 'p5';
 
 @Component({
   selector: 'app-home',
@@ -7,6 +10,61 @@ import { Component } from '@angular/core';
 })
 export class HomePage {
 
-  constructor() {}
+  constructor(
+    private indexed: IndexedDBService,
+    public lang: LangService,
+  ) { }
 
+  AllFileList = [{
+    date: '2023-10-05',
+    textColor: '#800080',
+    backgroundColor: '#ffc0cb',
+    title: 'testTitle',
+    content: 'testContent',
+  }];
+  isCreateNew = false;
+  CreateTime = '0000-00-00 00:00:00';
+  userInput = {
+    title: '',
+    content: '',
+  }
+
+  async ionViewDidEnter() {
+    let list = await this.indexed.GetFileListFromDB('/');
+    console.log('일단 보여주기: ', list);
+    this.create_p5canvas();
+  }
+
+  p5canvas: p5;
+  create_p5canvas() {
+    this.p5canvas = new p5((p: p5) => {
+      p.setup = () => {
+        p.noCanvas();
+        p.frameRate(5);
+      }
+      p.draw = () => {
+        if (!this.isCreateNew) p.noLoop();
+        // 작성 시간 실시간 업데이트
+        this.CreateTime = `${p.year()}-${p.nf(p.month(), 2)}-${p.nf(p.day(), 2)} `;
+        this.CreateTime += `${p.nf(p.hour(), 2)}:${p.nf(p.minute(), 2)}:${p.nf(p.second(), 2)}`;
+      }
+    });
+  }
+
+  create_new() {
+    this.isCreateNew = true;
+    if (this.p5canvas) this.p5canvas.loop();
+    setTimeout(() => {
+      let NewCardTitleElement = document.getElementById('newTitle');
+      NewCardTitleElement.focus();
+    }, 0);
+  }
+
+  save() {
+
+  }
+
+  go_to_creator_home() {
+    window.open('https://is2you2.github.io/', '_system');
+  }
 }
