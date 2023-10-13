@@ -2,7 +2,18 @@ import { Component } from '@angular/core';
 import { LangService } from '../lang.service';
 import { IndexedDBService } from '../indexed-db.service';
 import * as p5 from 'p5';
-import { Platform } from '@ionic/angular';
+import { AlertController, Platform } from '@ionic/angular';
+
+interface ContentForm {
+  blob?: Blob;
+  url?: any;
+  date: string;
+  timestamp: string;
+  textColor?: string;
+  backgroundColor?: string;
+  title: string;
+  content?: string;
+}
 
 @Component({
   selector: 'app-home',
@@ -15,32 +26,19 @@ export class HomePage {
     private indexed: IndexedDBService,
     public lang: LangService,
     private platform: Platform,
+    private alertCtrl: AlertController,
   ) { }
 
   /** 모든 정보 모아두기, 달력에 날짜 표기 */
-  AllFileList = [{
-    url: undefined,
-    date: '2023-10-05',
-    textColor: '#800080',
-    backgroundColor: '#ffc0cb',
-    title: 'testTitle',
-    content: 'testContent',
-  }];
+  AllFileList: ContentForm[] = [];
   /** 최종적으로 보여지는 결과물, 필터가 안된 경우에도 이걸로 보여줌 */
-  FilteredList = [
-    {
-      url: undefined,
-      date: '2023-10-05',
-      title: 'testTitle',
-      content: 'testContent',
-    }
-  ];
+  FilteredList: ContentForm[] = [];
   /** 보여주는 위치 시작값 */
   startIndex = 0;
   /** 선택된 카드, 새로 생성하거나 없을 때 -1 */
   SelectedIndex = -1;
   /** 보여주는 자료의 Index 배열 (number[]) */
-  ListSize = [0];
+  ListSize = [];
   isCreateNew = false;
   CreateTime = '0000-00-00 00:00:00';
   CardTargetDate = '';
@@ -120,7 +118,31 @@ export class HomePage {
   }
 
   async save() {
-    console.log('내용 저장하기: ', this.userInput);
+    if (!this.userInput.title) {
+      let alert = await this.alertCtrl.create({
+        header: this.lang.text['NoTitle'],
+        message: this.lang.text['InputTitle'],
+        buttons: [this.lang.text['OK']],
+      });
+      alert.present();
+      return;
+    }
+    this.isCreateNew = false;
+    let data = {
+      date: this.CardTargetDate,
+      title: this.userInput.title,
+      content: this.userInput.content,
+      timestamp: this.CreateTime,
+    }
+    this.AllFileList.unshift(data);
+    this.FilteredList.unshift(data);
+    this.ListSize.push(this.ListSize.length);
+  }
+
+  async remove(i: number) {
+    this.AllFileList.splice(i, 1);
+    this.FilteredList.splice(i, 1);
+    this.ListSize.pop();
   }
 
   go_to_creator_home() {

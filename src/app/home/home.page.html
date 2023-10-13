@@ -16,7 +16,7 @@
         </ion-item>
         <div slot="content">
           <ion-item>
-            <ion-input [(ngModel)]="SearchKeyword" placeholder="검색어 입력.."></ion-input>
+            <ion-input [(ngModel)]="SearchKeyword" [placeholder]="lang.text['InputSearchKey']"></ion-input>
             <ion-icon slot="end" name="search-circle-outline" (click)="filter_with_text()"></ion-icon>
           </ion-item>
         </div>
@@ -83,12 +83,13 @@
             <input type="text" class="new_card_input" [(ngModel)]="CardTargetDate">
           </ion-card-subtitle>
           <ion-card-title>
-            <input id="newTitle" type="text" class="new_card_input" placeholder="New Title"
+            <input id="newTitle" type="text" class="new_card_input" [placeholder]="lang.text['NoTitle']"
               [(ngModel)]="userInput.title">
           </ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          <input type="text" class="new_card_input" placeholder="New Content" [(ngModel)]="userInput.content">
+          <input type="text" class="new_card_input" [placeholder]="lang.text['NoContent']"
+            [(ngModel)]="userInput.content">
           <ion-button expand="block" fill="clear" (click)="save()">
             {{lang.text['Write']}}
           </ion-button>
@@ -102,18 +103,18 @@
           <ion-card-subtitle>{{FilteredList[i].date}}</ion-card-subtitle>
           <ion-card-title>{{FilteredList[i].title}}</ion-card-title>
         </ion-card-header>
-        <ion-card-content>
+        <ion-card-content *ngIf="FilteredList[i].content">
           {{FilteredList[i].content}}
         </ion-card-content>
         <ion-grid *ngIf="i == SelectedIndex">
           <ion-row>
-            <ion-col>
+            <!-- <ion-col>
               <ion-button expand="block" fill="clear">
                 {{lang.text['Modify']}}
               </ion-button>
-            </ion-col>
+            </ion-col> -->
             <ion-col>
-              <ion-button expand="block" fill="clear">
+              <ion-button expand="block" fill="clear" (click)="remove(i)">
                 {{lang.text['Delete']}}
               </ion-button>
             </ion-col>
