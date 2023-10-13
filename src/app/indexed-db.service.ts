@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 import { Injectable } from '@angular/core';
-import { LangService } from './lang.service';
 
 /** godot 웹 결과물과 파일을 공유하기 위한 비기랄까 */
 @Injectable({
@@ -10,9 +9,7 @@ import { LangService } from './lang.service';
 })
 export class IndexedDBService {
 
-  constructor(
-    private lang: LangService,
-  ) { }
+  constructor() { }
 
   /** IndexedDB */
   ionicDB: IDBDatabase;
@@ -43,34 +40,12 @@ export class IndexedDBService {
     }
   }
 
-  /** 고도엔진 시스템 오류 방지를 위해 폴더구조 생성 */
-  private createRecursiveDirectory(path: string, targetDB = this.ionicDB) {
-    let lastIndexOf = path.lastIndexOf('/');
-    let dir = path.substring(0, lastIndexOf);
-    if (!dir) return;
-    this.checkIfFileExist(dir, b => {
-      let put = targetDB.transaction('FILE_DATA', 'readwrite').objectStore('FILE_DATA').put({
-        timestamp: new Date(),
-        mode: 16893,
-      }, `/userfs/${dir}`);
-      put.onsuccess = (ev) => {
-        if (ev.type != 'success')
-          console.error('저장 실패: ', path);
-        this.createRecursiveDirectory(dir, targetDB);
-      }
-      put.onerror = (e) => {
-        console.error('IndexedDB createRecursiveDirectory failed: ', e);
-      }
-    });
-  }
-
   /**
    * 문자열 공유용
    * @param text 문서에 포함될 텍스트
    * @param path 저장될 상대 경로(user://~)
    */
   saveTextFileToUserPath(text: string, path: string, _CallBack = (_v: any) => { }, targetDB = this.ionicDB): Promise<any> {
-    this.createRecursiveDirectory(path, targetDB);
     return new Promise((done, error) => {
       let put = targetDB.transaction('FILE_DATA', 'readwrite').objectStore('FILE_DATA').put({
         timestamp: new Date(),
@@ -101,7 +76,6 @@ export class IndexedDBService {
       let int8Array = new Int8Array(arrayBuffer);
       for (let i = 0, j = byteStr.length; i < j; i++)
         int8Array[i] = byteStr.charCodeAt(i);
-      this.createRecursiveDirectory(path, targetDB);
       let put = targetDB.transaction('FILE_DATA', 'readwrite').objectStore('FILE_DATA').put({
         timestamp: new Date(),
         mode: 33206,
@@ -126,7 +100,6 @@ export class IndexedDBService {
    */
   saveInt8ArrayToUserPath(int8Array: Int8Array, path: string, targetDB = this.ionicDB): Promise<void> {
     return new Promise((done, error) => {
-      this.createRecursiveDirectory(path, targetDB);
       let put = targetDB.transaction('FILE_DATA', 'readwrite').objectStore('FILE_DATA').put({
         timestamp: new Date(),
         mode: 33206,
@@ -157,7 +130,6 @@ export class IndexedDBService {
       } catch (e) {
         error(e);
       }
-      this.createRecursiveDirectory(path, targetDB);
       let put = targetDB.transaction('FILE_DATA', 'readwrite').objectStore('FILE_DATA').put({
         timestamp: new Date(),
         mode: 33206,
@@ -181,7 +153,6 @@ export class IndexedDBService {
    * @param path 저장될 상대 경로(user://~)
    */
   saveFileToUserPath(file: any, path: string, _CallBack = (_v: any) => { }, targetDB = this.ionicDB): Promise<any> {
-    this.createRecursiveDirectory(path, targetDB);
     return new Promise((done, error) => {
       let put = targetDB.transaction('FILE_DATA', 'readwrite').objectStore('FILE_DATA').put(file, `/userfs/${path}`);
       put.onsuccess = (ev) => {

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { LangService } from '../lang.service';
 import { IndexedDBService } from '../indexed-db.service';
 import * as p5 from 'p5';
-import { AlertController, Platform } from '@ionic/angular';
+import { AlertController, LoadingController, Platform } from '@ionic/angular';
 
 interface ContentForm {
   blob?: Blob;
@@ -10,7 +10,6 @@ interface ContentForm {
   date: string;
   timestamp: string;
   textColor?: string;
-  backgroundColor?: string;
   title: string;
   content?: string;
 }
@@ -27,12 +26,11 @@ export class HomePage {
     public lang: LangService,
     private platform: Platform,
     private alertCtrl: AlertController,
+    private loadingCtrl: LoadingController,
   ) { }
 
   /** 모든 정보 모아두기, 달력에 날짜 표기 */
   AllFileList: ContentForm[] = [];
-  /** 최종적으로 보여지는 결과물, 필터가 안된 경우에도 이걸로 보여줌 */
-  FilteredList: ContentForm[] = [];
   /** 보여주는 위치 시작값 */
   startIndex = 0;
   /** 선택된 카드, 새로 생성하거나 없을 때 -1 */
@@ -55,7 +53,24 @@ export class HomePage {
     this.isMobile = this.platform.is('android') || this.platform.is('ios');
 
     let list = await this.indexed.GetFileListFromDB('/');
-    console.log('일단 보여주기: ', list);
+    for (let i = 0, j = list.length; i < j; i++) {
+      let log_data: any = {};
+      let file_ext = list[i].split('.').pop();
+      switch (file_ext) {
+        case 'log':
+          let raw_data = await this.indexed.loadTextFromUserPath(list[i]);
+          log_data = { ...JSON.parse(raw_data) };
+          this.AllFileList.push(log_data);
+          break;
+        case 'logattach':
+          let blob = await this.indexed.loadBlobFromUserPath(list[i], '');
+          let FileURL = URL.createObjectURL(blob);
+          this.AllFileList[this.AllFileList.length - 1].url = FileURL;
+          break;
+      }
+    }
+    this.SortAllListByDate();
+    this.CalcListSize();
     this.create_p5canvas();
   }
 
@@ -77,6 +92,10 @@ export class HomePage {
   }
 
   create_new() {
+    if (this.isCreateNew) {
+      this.isCreateNew = false;
+      return;
+    }
     this.SelectedIndex = -1;
     this.isCreateNew = true;
     this.userInput.title = '';
@@ -128,21 +147,59 @@ export class HomePage {
       return;
     }
     this.isCreateNew = false;
-    let data = {
+    let data: ContentForm = {
       date: this.CardTargetDate,
       title: this.userInput.title,
       content: this.userInput.content,
       timestamp: this.CreateTime,
     }
+    let date = data.date.split('-');
+    await this.indexed.saveTextFileToUserPath(JSON.stringify(data), `${date[0]}/${date[1]}/${date[2]}/${data.timestamp}.log`);
+    if (this.userInput.blob) { // 파일이 있으면 파일도 저장
+      let loading = await this.loadingCtrl.create({ message: '저장중입니다' });
+      loading.present();
+      await this.indexed.saveBlobToUserPath(this.userInput.blob, `${date[0]}/${date[1]}/${date[2]}/${data.timestamp}.logattach`);
+      let FileURL = URL.createObjectURL(this.userInput.blob);
+      data.url = FileURL;
+      loading.dismiss();
+    }
+    data['textColor'] = '#ff754e';
     this.AllFileList.unshift(data);
-    this.FilteredList.unshift(data);
-    this.ListSize.push(this.ListSize.length);
+    this.SortAllListByDate();
+    this.CalcListSize();
+    this.SelectedIndex = -1;
+  }
+
+  SortAllListByDate() {
+    this.AllFileList.sort((a, b) => {
+      if (a.date > b.date)
+        return -1;
+      if (a.date < b.date)
+        return 1;
+      return 0;
+    });
+  }
+
+  /** 필터링 갯수 제한 */
+  FILTERED_LIMIT = 5;
+  /** 보여주는 리스트 IndexArray 관리 */
+  CalcListSize() {
+    let LimitSize = Math.min(this.FILTERED_LIMIT, this.AllFileList.length);
+    this.ListSize = Array.from({ length: LimitSize }, (_, i) => i + this.startIndex)
   }
 
   async remove(i: number) {
+    let date = this.AllFileList[i].date.split('-');
+    await this.indexed.removeFileFromUserPath(`${date[0]}/${date[1]}/${date[2]}/${this.AllFileList[i].timestamp}.log`);
+    if (this.AllFileList[i].url) {
+      let loading = await this.loadingCtrl.create({ message: '삭제중입니다' });
+      loading.present();
+      await this.indexed.removeFileFromUserPath(`${date[0]}/${date[1]}/${date[2]}/${this.AllFileList[i].timestamp}.logattach`);
+      URL.revokeObjectURL(this.AllFileList[i].url);
+      loading.dismiss();
+    }
     this.AllFileList.splice(i, 1);
-    this.FilteredList.splice(i, 1);
-    this.ListSize.pop();
+    this.CalcListSize();
   }
 
   go_to_creator_home() {

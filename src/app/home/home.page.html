@@ -5,7 +5,7 @@
     </ion-toolbar>
   </ion-header>
   <ion-content>
-    <ion-item-divider>
+    <!-- <ion-item-divider>
       <ion-label>{{lang.text['Filter']}}</ion-label>
     </ion-item-divider>
     <ion-accordion-group>
@@ -30,7 +30,7 @@
           <ion-datetime [locale]="lang.lang" presentation="date" [highlightedDates]="AllFileList"></ion-datetime>
         </div>
       </ion-accordion>
-    </ion-accordion-group>
+    </ion-accordion-group> -->
     <div *ngIf="!isMobile">
       <ion-item-divider>
         <ion-label>{{lang.text['MobileApp']}}</ion-label>
@@ -98,13 +98,13 @@
     </div>
     <div *ngFor="let i of ListSize">
       <ion-card (click)="SelectedIndex = i">
-        <img *ngIf="FilteredList[i].url" [src]="FilteredList[i].url" />
+        <img *ngIf="AllFileList[i].url" [src]="AllFileList[i].url" />
         <ion-card-header>
-          <ion-card-subtitle>{{FilteredList[i].date}}</ion-card-subtitle>
-          <ion-card-title>{{FilteredList[i].title}}</ion-card-title>
+          <ion-card-subtitle>{{AllFileList[i].date}}</ion-card-subtitle>
+          <ion-card-title>{{AllFileList[i].title}}</ion-card-title>
         </ion-card-header>
-        <ion-card-content *ngIf="FilteredList[i].content">
-          {{FilteredList[i].content}}
+        <ion-card-content *ngIf="AllFileList[i].content">
+          {{AllFileList[i].content}}
         </ion-card-content>
         <ion-grid *ngIf="i == SelectedIndex">
           <ion-row>
