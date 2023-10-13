@@ -1,18 +1,18 @@
 <ion-menu contentId="menu-content" menuId="menu-content" side="start" type="overlay">
   <ion-header>
     <ion-toolbar color="primary">
-      <ion-title>간단한 기록앱</ion-title>
+      <ion-title>{{lang.text['SideTitle']}}</ion-title>
     </ion-toolbar>
   </ion-header>
   <ion-content>
     <ion-item-divider>
-      <ion-label>필터</ion-label>
+      <ion-label>{{lang.text['Filter']}}</ion-label>
     </ion-item-divider>
     <ion-accordion-group>
       <ion-accordion toggleIcon="">
         <ion-item slot="header">
           <ion-icon slot="start" name="search-outline"></ion-icon>
-          <ion-label>검색어</ion-label>
+          <ion-label>{{lang.text['SearchKey']}}</ion-label>
         </ion-item>
         <div slot="content">
           <ion-item>
@@ -24,23 +24,32 @@
       <ion-accordion toggleIcon="">
         <ion-item slot="header">
           <ion-icon slot="start" name="calendar-outline"></ion-icon>
-          <ion-label>날짜 탐색</ion-label>
+          <ion-label>{{lang.text['DateKey']}}</ion-label>
         </ion-item>
         <div slot="content">
           <ion-datetime [locale]="lang.lang" presentation="date" [highlightedDates]="AllFileList"></ion-datetime>
         </div>
       </ion-accordion>
     </ion-accordion-group>
+    <div *ngIf="!isMobile">
+      <ion-item-divider>
+        <ion-label>{{lang.text['MobileApp']}}</ion-label>
+      </ion-item-divider>
+      <ion-item button (click)="go_to_playstore_page()">
+        <ion-icon slot="start" name="logo-google-playstore"></ion-icon>
+        <ion-label>{{lang.text['LinkPlaystore']}}</ion-label>
+      </ion-item>
+    </div>
     <ion-item-divider>
-      <ion-label>제작자</ion-label>
+      <ion-label>{{lang.text['Creator']}}</ion-label>
     </ion-item-divider>
     <ion-item button (click)="go_to_creator_home()">
       <ion-avatar slot="start">
-        <img src="assets/icon/favicon.png" />
+        <img src="assets/icon/pjcone.png" />
       </ion-avatar>
       <ion-label>
         <div>Project: Cone</div>
-        <div style="color: #888;">최성수</div>
+        <div style="color: #888;">{{lang.text['CreatorName']}}</div>
       </ion-label>
     </ion-item>
   </ion-content>
@@ -53,19 +62,19 @@
         <ion-menu-button> </ion-menu-button>
       </ion-buttons>
       <ion-title>
-        나의 기록
+        {{lang.text['Title']}}
       </ion-title>
     </ion-toolbar>
   </ion-header>
 
   <ion-content [fullscreen]="true" class="ion-padding">
     <ion-button color="tertiary" expand="block" fill="clear" shape="round" (click)="create_new()">
-      눌러서 새 기록 작성
+      {{lang.text['PressToAdd']}}
     </ion-button>
     <div *ngIf="isCreateNew">
       <ion-card>
         <ion-button expand="block" fill="clear" (click)="ActiveInputSelector()">
-          이미지 추가
+          {{lang.text['AddImage']}}
         </ion-button>
         <input id="imageInput" type="file" accept="image/*" (change)="inputImageSelected($event)" hidden>
         <img *ngIf="userInput.url" [src]="userInput.url" />
@@ -81,7 +90,7 @@
         <ion-card-content>
           <input type="text" class="new_card_input" placeholder="New Content" [(ngModel)]="userInput.content">
           <ion-button expand="block" fill="clear" (click)="save()">
-            작성하기
+            {{lang.text['Write']}}
           </ion-button>
         </ion-card-content>
       </ion-card>
@@ -100,12 +109,12 @@
           <ion-row>
             <ion-col>
               <ion-button expand="block" fill="clear">
-                수정
+                {{lang.text['Modify']}}
               </ion-button>
             </ion-col>
             <ion-col>
               <ion-button expand="block" fill="clear">
-                삭제
+                {{lang.text['Delete']}}
               </ion-button>
             </ion-col>
           </ion-row>

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { LangService } from '../lang.service';
 import { IndexedDBService } from '../indexed-db.service';
 import * as p5 from 'p5';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
@@ -13,6 +14,7 @@ export class HomePage {
   constructor(
     private indexed: IndexedDBService,
     public lang: LangService,
+    private platform: Platform,
   ) { }
 
   /** 모든 정보 모아두기, 달력에 날짜 표기 */
@@ -49,7 +51,11 @@ export class HomePage {
     blob: undefined as Blob,
   }
 
+  isMobile = true;
+
   async ionViewDidEnter() {
+    this.isMobile = this.platform.is('android') || this.platform.is('ios');
+
     let list = await this.indexed.GetFileListFromDB('/');
     console.log('일단 보여주기: ', list);
     this.create_p5canvas();
@@ -66,7 +72,7 @@ export class HomePage {
         if (!this.isCreateNew) p.noLoop();
         // 작성 시간 실시간 업데이트
         this.CreateTime = `${p.year()}-${p.nf(p.month(), 2)}-${p.nf(p.day(), 2)}`;
-        this.CardTargetDate = this.CreateTime;
+        if (!this.CardTargetDate) this.CardTargetDate = this.CreateTime;
         this.CreateTime += ` ${p.nf(p.hour(), 2)}:${p.nf(p.minute(), 2)}:${p.nf(p.second(), 2)}`;
       }
     });
@@ -119,5 +125,9 @@ export class HomePage {
 
   go_to_creator_home() {
     window.open('https://is2you2.github.io/', '_system');
+  }
+
+  go_to_playstore_page() {
+    window.open('about:blank', '_system');
   }
 }

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IndexedDBService } from './indexed-db.service';
+import { LangService } from './lang.service';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +10,9 @@ import { IndexedDBService } from './indexed-db.service';
 export class AppComponent {
   constructor(
     indexed: IndexedDBService,
+    lang: LangService,
   ) {
+    lang.initialize();
     indexed.initialize();
   }
 }
