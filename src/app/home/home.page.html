@@ -1,18 +1,26 @@
 <ion-menu contentId="menu-content" menuId="menu-content" side="start" type="overlay">
   <ion-header>
     <ion-toolbar color="primary">
-      <ion-title>간단 메모장</ion-title>
+      <ion-title>간단한 기록앱</ion-title>
     </ion-toolbar>
   </ion-header>
   <ion-content>
     <ion-item-divider>
-      <ion-label>기능</ion-label>
+      <ion-label>필터</ion-label>
     </ion-item-divider>
-    <ion-item button>
-      <ion-icon slot="start" name="search-outline"></ion-icon>
-      <ion-label>검색어</ion-label>
-    </ion-item>
     <ion-accordion-group>
+      <ion-accordion toggleIcon="">
+        <ion-item slot="header">
+          <ion-icon slot="start" name="search-outline"></ion-icon>
+          <ion-label>검색어</ion-label>
+        </ion-item>
+        <div slot="content">
+          <ion-item>
+            <ion-input [(ngModel)]="SearchKeyword" placeholder="검색어 입력.."></ion-input>
+            <ion-icon slot="end" name="search-circle-outline" (click)="filter_with_text()"></ion-icon>
+          </ion-item>
+        </div>
+      </ion-accordion>
       <ion-accordion toggleIcon="">
         <ion-item slot="header">
           <ion-icon slot="start" name="calendar-outline"></ion-icon>
@@ -58,7 +66,7 @@
       <ion-card>
         <ion-card-header>
           <ion-card-subtitle>
-            {{CreateTime}}
+            <input type="text" class="new_card_input" [(ngModel)]="CardTargetDate">
           </ion-card-subtitle>
           <ion-card-title>
             <input id="newTitle" type="text" class="new_card_input" placeholder="New Title"
@@ -66,7 +74,7 @@
           </ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          <input type="text" class="new_card_input" placeholder="New Title" [(ngModel)]="userInput.content">
+          <input type="text" class="new_card_input" placeholder="New Content" [(ngModel)]="userInput.content">
           <ion-button expand="block" fill="clear" shape="round">
             작성하기
           </ion-button>
@@ -76,7 +84,7 @@
     <div *ngFor="let i of [0,1,2,3,4,5,6,7,8,9]">
       <ion-card>
         <ion-card-header>
-          <ion-card-subtitle>0000-00-00 00:00:00</ion-card-subtitle>
+          <ion-card-subtitle>0000-00-00</ion-card-subtitle>
           <ion-card-title>Awesome Title</ion-card-title>
         </ion-card-header>
         <ion-card-content>

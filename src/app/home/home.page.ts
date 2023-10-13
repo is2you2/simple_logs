@@ -22,8 +22,15 @@ export class HomePage {
     title: 'testTitle',
     content: 'testContent',
   }];
+  /** 최종적으로 보여지는 결과물, 필터가 안된 경우에도 이걸로 보여줌 */
+  FilteredList = [];
+  /** 보여주는 위치 시작값 */
+  startIndex = 0;
+  /** 보여주는 자료의 Index 배열 (number[]) */
+  ListSize = [];
   isCreateNew = false;
   CreateTime = '0000-00-00 00:00:00';
+  CardTargetDate = '';
   userInput = {
     title: '',
     content: '',
@@ -45,14 +52,18 @@ export class HomePage {
       p.draw = () => {
         if (!this.isCreateNew) p.noLoop();
         // 작성 시간 실시간 업데이트
-        this.CreateTime = `${p.year()}-${p.nf(p.month(), 2)}-${p.nf(p.day(), 2)} `;
-        this.CreateTime += `${p.nf(p.hour(), 2)}:${p.nf(p.minute(), 2)}:${p.nf(p.second(), 2)}`;
+        this.CreateTime = `${p.year()}-${p.nf(p.month(), 2)}-${p.nf(p.day(), 2)}`;
+        this.CardTargetDate = this.CreateTime;
+        this.CreateTime += ` ${p.nf(p.hour(), 2)}:${p.nf(p.minute(), 2)}:${p.nf(p.second(), 2)}`;
       }
     });
   }
 
   create_new() {
     this.isCreateNew = true;
+    this.userInput.title = '';
+    this.userInput.content = '';
+    this.CardTargetDate = '';
     if (this.p5canvas) this.p5canvas.loop();
     setTimeout(() => {
       let NewCardTitleElement = document.getElementById('newTitle');
@@ -60,8 +71,15 @@ export class HomePage {
     }, 0);
   }
 
-  save() {
+  SearchKeyword = '';
+  /** 검색어로 필터링 */
+  filter_with_text() {
+    console.log('filter_with_text: ', this.SearchKeyword);
+    this.SearchKeyword = '';
+  }
 
+  save() {
+    console.log('내용 저장하기: ', this.userInput);
   }
 
   go_to_creator_home() {
