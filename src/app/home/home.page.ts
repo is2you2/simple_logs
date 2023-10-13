@@ -15,6 +15,7 @@ export class HomePage {
     public lang: LangService,
   ) { }
 
+  /** 모든 정보 모아두기, 달력에 날짜 표기 */
   AllFileList = [{
     date: '2023-10-05',
     textColor: '#800080',
@@ -26,6 +27,8 @@ export class HomePage {
   FilteredList = [];
   /** 보여주는 위치 시작값 */
   startIndex = 0;
+  /** 선택된 카드, 새로 생성하거나 없을 때 -1 */
+  SelectedIndex = -1;
   /** 보여주는 자료의 Index 배열 (number[]) */
   ListSize = [];
   isCreateNew = false;
@@ -60,6 +63,7 @@ export class HomePage {
   }
 
   create_new() {
+    this.SelectedIndex = -1;
     this.isCreateNew = true;
     this.userInput.title = '';
     this.userInput.content = '';

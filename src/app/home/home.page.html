@@ -64,6 +64,10 @@
     </ion-button>
     <div *ngIf="isCreateNew">
       <ion-card>
+        <ion-button expand="block" fill="clear">
+          이미지 추가
+        </ion-button>
+        <img src="https://ionicframework.com/docs/img/demos/card-media.png" />
         <ion-card-header>
           <ion-card-subtitle>
             <input type="text" class="new_card_input" [(ngModel)]="CardTargetDate">
@@ -75,7 +79,7 @@
         </ion-card-header>
         <ion-card-content>
           <input type="text" class="new_card_input" placeholder="New Content" [(ngModel)]="userInput.content">
-          <ion-button expand="block" fill="clear" shape="round">
+          <ion-button expand="block" fill="clear">
             작성하기
           </ion-button>
         </ion-card-content>
@@ -83,6 +87,7 @@
     </div>
     <div *ngFor="let i of [0,1,2,3,4,5,6,7,8,9]">
       <ion-card>
+        <img src="https://ionicframework.com/docs/img/demos/card-media.png" />
         <ion-card-header>
           <ion-card-subtitle>0000-00-00</ion-card-subtitle>
           <ion-card-title>Awesome Title</ion-card-title>
@@ -90,6 +95,20 @@
         <ion-card-content>
           Awesome content
         </ion-card-content>
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <ion-button expand="block" fill="clear">
+                수정
+              </ion-button>
+            </ion-col>
+            <ion-col>
+              <ion-button expand="block" fill="clear">
+                삭제
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
       </ion-card>
     </div>
   </ion-content>
